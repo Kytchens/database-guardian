@@ -1,0 +1,4 @@
+interface:
+  display_name: "Database Guardian"
+  short_description: "Guardrails for safe database work"
+  default_prompt: "Use $database-guardian to inspect or modify database-related work safely."
