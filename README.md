@@ -192,9 +192,14 @@ If a project might have a database, the agent should check safe local signals be
 supabase/
 prisma/
 drizzle/
+postgres/
+postgresql/
 migrations/
 schema.sql
 schema.prisma
+postgresql.conf
+pg_hba.conf
+docker-compose.yml with Postgres services
 drizzle.config.*
 .env
 .env.local
@@ -212,6 +217,18 @@ SUPABASE_PROJECT_ID
 SUPABASE_DB_URL
 DATABASE_URL
 POSTGRES_URL
+POSTGRES_URI
+POSTGRES_DSN
+POSTGRES_HOST
+POSTGRES_PORT
+POSTGRES_DB
+POSTGRES_USER
+PGHOST
+PGPORT
+PGDATABASE
+PGUSER
+PGPASSWORD
+PGDATABASE_URL
 PRISMA_DATABASE_URL
 DIRECT_URL
 ```
@@ -223,6 +240,18 @@ https://<project-ref>.supabase.co
 ```
 
 But it does not prove whether the project is production, staging, or dev. If the agent cannot prove the environment is local/dev, Database Guardian should use `PRODUCTION_SAFE`.
+
+For PostgreSQL, local/dev proof can include:
+
+```text
+localhost
+127.0.0.1
+local Docker service names like postgres
+local Docker Compose Postgres service
+local-only PGHOST/POSTGRES_HOST values
+```
+
+Remote hosts, cloud hosts, IP addresses, or unknown Postgres URLs should be treated as shared/production-safe until proven otherwise.
 
 Important:
 
