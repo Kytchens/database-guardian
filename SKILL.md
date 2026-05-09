@@ -41,13 +41,33 @@ If no mode is stated, use `READ_ONLY` for proven local/dev and `PRODUCTION_SAFE`
    - Database command or deployment command
 2. Prove the environment:
    - `local`, `dev`, `preview`, `staging`, `production`, `shared`, or `unknown`
-   - Cite the proof, such as localhost URL, local Supabase config, env var name, CLI target, branch, connection string host, or project ref.
+   - Cite the proof, such as localhost URL, local Supabase config, env var name, CLI target, branch, connection string host, or Supabase project ref.
 3. Choose the mode.
 4. For read-only work, use safe query rules.
 5. For risky work, present the action preview and wait for approval.
 6. After each database-sensitive action, update the `DB Safety Log`.
 
 If the environment cannot be proven local/dev, treat it as production-safe and ask before running any query that may expose sensitive data, create load, or touch shared systems.
+
+## Database Detection
+
+Before deciding that a project has no database, inspect safe local signals:
+
+- Database folders: `supabase/`, `prisma/`, `drizzle/`, `migrations/`, `db/`, `database/`.
+- Database files: `schema.sql`, `schema.prisma`, `drizzle.config.*`, migration files, seed files.
+- Package scripts and dependencies mentioning Supabase, Postgres, Prisma, Drizzle, TypeORM, Sequelize, Knex, Rails migrations, Django migrations, or similar database tools.
+- Environment files such as `.env`, `.env.local`, `.env.development`, `.env.production`, and `.env.example`.
+
+When inspecting environment files:
+
+- Read only enough to detect database presence and environment target.
+- Prefer key names and non-secret identifiers over values.
+- Treat keys like `SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_PROJECT_ID`, `SUPABASE_DB_URL`, `DATABASE_URL`, `POSTGRES_URL`, `PRISMA_DATABASE_URL`, and `DIRECT_URL` as database signals.
+- For Supabase URLs, the project ref in `https://<project-ref>.supabase.co` proves a Supabase project exists, but does not prove whether it is production or staging.
+- Never print secret values, service-role keys, passwords, tokens, full connection strings, or private `.env` contents into chat.
+- If a `.env` file contains a remote Supabase/Postgres URL and the environment cannot be proven local/dev, use `PRODUCTION_SAFE`.
+
+If no database signals are found, say that Database Guardian is available but no database-sensitive work is detected, then continue normally.
 
 ## Read-Only Mode
 

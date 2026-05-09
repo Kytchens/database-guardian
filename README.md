@@ -11,6 +11,7 @@ Use it with Codex, Claude, Cursor, Kimi, or any agent that can read a `SKILL.md`
 The skill tells agents to:
 
 - Use read-only investigation by default.
+- Detect database presence from safe local signals such as `supabase/`, migrations, ORM config, and `.env` keys.
 - Prove whether the target database is local, staging, production, shared, or unknown.
 - Ask before any database mutation.
 - Ask with double confirmation before destructive actions.
@@ -182,6 +183,52 @@ SELECT * FROM customers;
 ```
 
 Especially on production or sensitive tables.
+
+## Database Detection
+
+If a project might have a database, the agent should check safe local signals before deciding:
+
+```text
+supabase/
+prisma/
+drizzle/
+migrations/
+schema.sql
+schema.prisma
+drizzle.config.*
+.env
+.env.local
+.env.example
+```
+
+Environment files are allowed for detection, but secrets must not be printed.
+
+Database signal examples:
+
+```text
+SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_URL
+SUPABASE_PROJECT_ID
+SUPABASE_DB_URL
+DATABASE_URL
+POSTGRES_URL
+PRISMA_DATABASE_URL
+DIRECT_URL
+```
+
+For Supabase, a URL like this proves a Supabase project exists:
+
+```text
+https://<project-ref>.supabase.co
+```
+
+But it does not prove whether the project is production, staging, or dev. If the agent cannot prove the environment is local/dev, Database Guardian should use `PRODUCTION_SAFE`.
+
+Important:
+
+```text
+Agents should never print service-role keys, passwords, tokens, full connection strings, or private .env contents into chat.
+```
 
 ## Approval Examples
 
